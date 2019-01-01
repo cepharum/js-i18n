@@ -170,9 +170,10 @@ class Localization {
 	 * of provided selector.
 	 *
 	 * @param {string|string[]} selector one or more locales to be tested
+	 * @param {boolean} persist set true to make selected locale current one unless it is missing
 	 * @returns {?Localization} found manager instance, null on missing any registered localization
 	 */
-	static select( selector ) {
+	static select( selector, persist = false ) {
 		let match = null;
 		const list = Array.isArray( selector ) ? selector : [selector];
 		const numAccepted = list.length;
@@ -198,6 +199,10 @@ class Localization {
 				match = accepted;
 				break;
 			}
+		}
+
+		if ( match && persist ) {
+			currentLocale = match;
 		}
 
 		return match;
