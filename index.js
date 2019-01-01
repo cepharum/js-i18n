@@ -471,15 +471,15 @@ class Localization {
  * Exposes filter function e.g. for registration via `Vue.filter()`.
  *
  * @param {string} lookup some string to be looked up for matching translation
- * @param {int} numerus number of addressed subjects in desired translation
+ * @param {int} number number of subjects to be described in requested translation
  * @param {string} genus explicitly required genus of translation
  * @returns {string} optionally translated string
  */
-function filter( lookup, { numerus = null, genus = null } = {} ) {
+function filter( lookup, { number = null, genus = null } = {} ) {
 	const locale = currentLocale == null ? Localization.current : currentLocale;
 
 	if ( locale ) {
-		return locale.lookup( lookup, lookup, numerus, genus );
+		return locale.lookup( lookup, lookup, number, genus );
 	}
 
 	const match = ptnLookup.exec( lookup );
