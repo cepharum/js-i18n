@@ -4,7 +4,7 @@
   "description": "an i18n service for Javascript",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui=tdd tests/**/*.spec.js",
+    "test": "mocha --ui=tdd test/**/*.spec.js",
     "lint": "eslint ."
   },
   "repository": {

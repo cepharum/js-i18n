@@ -45,27 +45,79 @@ const locales = new Map();
 let currentLocale = null;
 
 /**
+ * Matches locale identifier.
+ *
+ * @type {RegExp}
+ */
+const ptnLocale = /^\s*([a-z]{2,3})(?:[-_]([a-z]{2,3}))?(?:[@.]([a-z0-9-]+))?\s*$/i;
+
+/**
  * Matches lookup strings.
  *
  * @type {RegExp}
  */
-const ptnLookup = /^(?:@?((?:[^\s.]+\.)*[^\s.]+))(\s*=\s*(.*))?$/;
+const ptnLookup = /^\s*(@)?\s*((?:[a-z0-9_-]+\.)*[a-z0-9_-]+)(\s*=\s*(.*))?\s*$/i;
 
 
 /**
  * Implements localization by providing translations for a selected locale
  * matching hierarchical lookup keys.
  */
-export class Localization {
+class Localization {
 	/**
+	 * @param {string} locale locale to be managed, provided for mostly informational purposes, only
 	 * @param {Translations} tree initial tree-like set of translations to be managed
+	 * @param {string} region region of locale to be managed
+	 * @param {function(number:int):string} numerusSelector retrieves name of property addressing translation for provided number of subjects
 	 */
-	constructor( tree ) {
+	constructor( locale, tree, { numerusSelector = null } = {} ) {
+		if ( typeof locale !== "string" ) {
+			throw new TypeError( "invalid locale identifier" );
+		}
+
+		const match = ptnLocale.exec( locale );
+		if ( !match ) {
+			throw new TypeError( "invalid locale identifier" );
+		}
+
 		if ( !tree || typeof tree !== "object" || Array.isArray( tree ) ) {
 			throw new TypeError( "invalid type of translations map" );
 		}
 
+		if ( numerusSelector != null && typeof numerusSelector !== "function" ) {
+			throw new TypeError( "invalid numerus selector callback" );
+		}
+
+		const [ , language, , region ] = match;
+
 		Object.defineProperties( this, {
+			/**
+			 * Provides tag of managed locale.
+			 *
+			 * @name Localization#tag
+			 * @property {string}
+			 * @readonly
+			 */
+			tag: { value: region == null ? language : `${language}-${region}` },
+
+			/**
+			 * Provides language of managed locale.
+			 *
+			 * @name Localization#language
+			 * @property {string}
+			 * @readonly
+			 */
+			language: { value: language },
+
+			/**
+			 * Provides region of managed locale.
+			 *
+			 * @name Localization#region
+			 * @property {?string}
+			 * @readonly
+			 */
+			region: { value: region },
+
 			/**
 			 * Exposes current locales tree of translations.
 			 *
@@ -74,6 +126,16 @@ export class Localization {
 			 * @readonly
 			 */
 			tree: { value: this.constructor.merge( {}, tree ) },
+
+			/**
+			 * Provides callback providing key for selecting translation with
+			 * proper numerus according to some provided number of subjects.
+			 *
+			 * @name Localization#numerusSelector
+			 * @property {function(number:int):string}
+			 * @readonly
+ 			 */
+			numerusSelector: { value: numerusSelector || ( n => ( parseFloat( n ) === 1 ? "singular" : "plural" ) ) },
 		} );
 	}
 
@@ -86,7 +148,7 @@ export class Localization {
 		if ( currentLocale == null ) {
 			let list = [process.env.LOCALE || "en"];
 
-			if ( navigator ) {
+			if ( typeof navigator !== "undefined" ) {
 				if ( Array.isArray( navigator.languages ) ) {
 					list = navigator.languages;
 				} else {
@@ -95,6 +157,9 @@ export class Localization {
 			}
 
 			currentLocale = this.select( list );
+			if ( !currentLocale ) {
+				throw new Error( "accessing locale manager failed due to lack of any registered locale" );
+			}
 		}
 
 		return locales[currentLocale];
@@ -145,7 +210,19 @@ export class Localization {
 	 * @return {boolean} true if string describes locale
 	 */
 	static isValidLocale( locale ) {
-		return /^[a-z]{2,3}(?:[-_][a-zA-Z]{2,3})?/.test( locale );
+		return ptnLocale.test( locale );
+	}
+
+	/**
+	 * Detects if a provided string is containing proper lookup string.
+	 *
+	 * @param {string} lookup string to be tested
+	 * @return {boolean} true if string contains valid lookup string
+	 */
+	static isValidLookup( lookup ) {
+		let match;
+
+		return Boolean( typeof lookup === "string" && ( match = ptnLookup.exec( lookup ) ) && ( !match[3] || match[1] ) );
 	}
 
 	/**
@@ -184,9 +261,10 @@ export class Localization {
 	 *
 	 * @param {string} locale locale selector
 	 * @param {Translations} translations tree of translations
+	 * @param {function(number:int):string} numerusSelector retrieves property name
 	 * @returns {Localization} fluent interface
 	 */
-	static registerTranslations( locale, translations ) {
+	static register( locale, translations, numerusSelector = null ) {
 		if ( !this.isValidLocale( locale ) ) {
 			throw new TypeError( "invalid locale" );
 		}
@@ -199,7 +277,7 @@ export class Localization {
 			throw new TypeError( "invalid type of translations map" );
 		}
 
-		locales.set( locale, new this( translations ) );
+		locales.set( locale, new this( locale, translations, { numerusSelector } ) );
 
 		return this;
 	}
@@ -261,29 +339,37 @@ export class Localization {
 
 								switch ( typeof value ) {
 									case "string" :
-									case "number" :
-									case "function" : {
+									case "number" : {
 										const existing = destination[key];
 										if ( existing != null && typeof existing === "object" ) {
 											throw new TypeError( "invalid scalar replacement for existing thread of translations" );
 										}
 
-										destination[key] = value;
+										destination[key] = String( value );
 
 										break;
 									}
 
 									case "object" :
-										if ( !Array.isArray( value ) ) {
+										if ( Array.isArray( value ) ) {
 											throw new TypeError( "invalid array in tree of translations" );
 										}
 
 										if ( value ) {
-											if ( !destination.hasOwnProperty( key ) ) {
+											if ( destination.hasOwnProperty( key ) ) {
+												const existing = destination[key];
+												if ( typeof existing !== "object" ) {
+													throw new TypeError( "invalid non-scalar replacement for existing leaf of translations tree" );
+												}
+
+												if ( !existing ) {
+													destination[key] = {};
+												}
+											} else {
 												destination[key] = {};
 											}
 
-											this.merge( value, destination[key] );
+											this.merge( destination[key], value );
 										}
 								}
 							} );
@@ -304,39 +390,75 @@ export class Localization {
 	 *
 	 * @param {string} path period-separated sequence of key names each selecting next descendant in tree of translations
 	 * @param {?string} fallback fallback to return on mismatch
-	 * @param {int} numerus number of addressed subjects in desired translation
+	 * @param {int} number number of addressed subjects in desired translation
 	 * @param {string} genus explicitly required genus of translation
-	 * @returns {?string} found translation, provided fallback on mismatch
+	 * @returns {?string} found translation, provided fallback on mismatch, lookup on providing invalid lookup
 	 */
-	lookup( path, fallback = null, numerus = 1, genus = null ) {
+	lookup( path, fallback = null, number = null, genus = null ) {
 		const match = ptnLookup.exec( path );
-		if ( match ) {
-			if ( match[1] ) {
-				const segments = String( path ).trim().split( "." );
-				const numSegments = segments.length;
-				let node = this.tree;
+		if ( match && ( !match[3] || match[1] ) ) {
+			// provided input is a basically valid lookup
+			// -> search translations for matching record
+			const segments = String( match[2] ).trim().split( "." );
+			const numSegments = segments.length;
+			let node = this.tree;
 
-				for ( let i = 0; i < numSegments; i++ ) {
-					const key = segments[i];
+			for ( let i = 0; i < numSegments; i++ ) {
+				const key = segments[i];
 
-					if ( key ) {
-						if ( node.hasOwnProperty( key ) ) {
-							node = node[key];
-						} else {
-							return match[2] ? match[3] : fallback;
-						}
+				if ( key ) {
+					if ( typeof node === "object" && node && !Array.isArray( node ) && node.hasOwnProperty( key ) ) {
+						node = node[key];
+					} else {
+						node = null;
+						break;
 					}
 				}
-
-				return node;
 			}
 
-			if ( match[2] ) {
-				return match[3];
+			for ( const ref of [ node, match[3] ? match[4] : fallback ] ) {
+				if ( ref != null ) {
+					let subnode = ref;
+
+					if ( number != null && typeof subnode === "object" && subnode ) {
+						const numerus = this.numerusSelector( number );
+
+						if ( numerus && subnode.hasOwnProperty( numerus ) ) {
+							subnode = subnode[numerus];
+						} else if ( subnode.hasOwnProperty( "*" ) ) {
+							subnode = subnode["*"];
+						} else {
+							subnode = null;
+						}
+					}
+
+					if ( genus != null && typeof subnode === "object" && subnode ) {
+						if ( subnode.hasOwnProperty( genus ) ) {
+							subnode = subnode[genus];
+						} else if ( subnode.hasOwnProperty( "*" ) ) {
+							subnode = subnode["*"];
+						} else {
+							subnode = null;
+						}
+					}
+
+					if ( subnode !== ref ) {
+						if ( typeof subnode === "string" ) {
+							return subnode;
+						}
+
+						continue;
+					}
+
+					return ref;
+				}
 			}
+
+			return null;
 		}
 
-		return fallback;
+		// provided input is not a valid lookup -> pass through w/o modifying
+		return path;
 	}
 }
 
@@ -348,7 +470,7 @@ export class Localization {
  * @param {string} genus explicitly required genus of translation
  * @returns {string} optionally translated string
  */
-export function filter( lookup, { numerus = 1, genus = null } = {} ) {
+function filter( lookup, { numerus = null, genus = null } = {} ) {
 	const locale = currentLocale == null ? Localization.current : currentLocale;
 
 	if ( locale ) {
@@ -359,3 +481,7 @@ export function filter( lookup, { numerus = 1, genus = null } = {} ) {
 
 	return match[2] ? match[3] : lookup;
 }
+
+
+exports.Localization = Localization;
+exports.filter = filter;
