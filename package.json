@@ -1,7 +1,7 @@
 {
-  "name": "@cepharum/vue-i18n",
+  "name": "@cepharum/js-i18n",
   "version": "0.0.1",
-  "description": "i18n service for VueJS",
+  "description": "an i18n service for Javascript",
   "main": "index.js",
   "scripts": {
     "test": "mocha --ui=tdd tests/**/*.spec.js",
@@ -9,18 +9,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cepharum/vue-i18n.git"
+    "url": "git+https://github.com/cepharum/js-i18n.git"
   },
   "keywords": [
     "i18n",
-    "vuejs"
+    "l10n"
   ],
   "author": "cepharum GmbH",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cepharum/vue-i18n/issues"
+    "url": "https://github.com/cepharum/js-i18n/issues"
   },
-  "homepage": "https://github.com/cepharum/vue-i18n#readme",
+  "homepage": "https://github.com/cepharum/js-i18n#readme",
   "devDependencies": {
     "eslint": "^5.11.1",
     "eslint-config-cepharum": "^1.0.8",
