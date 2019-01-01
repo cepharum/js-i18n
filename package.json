@@ -4,7 +4,7 @@
   "description": "i18n service for VueJS",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui=tdd tests/**/*.spec.js"
+    "test": "mocha --ui=tdd tests/**/*.spec.js",
     "lint": "eslint ."
   },
   "repository": {
