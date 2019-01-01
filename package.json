@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "an i18n service for Javascript",
   "main": "index.js",
+  "private": false,
   "scripts": {
     "test": "mocha --ui=tdd test/**/*.spec.js",
     "lint": "eslint ."
