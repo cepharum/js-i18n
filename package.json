@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --ui=tdd tests/**/*.spec.js"
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/cepharum/vue-i18n/issues"
   },
-  "homepage": "https://github.com/cepharum/vue-i18n#readme"
+  "homepage": "https://github.com/cepharum/vue-i18n#readme",
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-cepharum": "^1.0.8",
+    "eslint-plugin-promise": "^4.0.1",
+    "mocha": "^5.2.0",
+    "should": "^13.2.3"
+  }
 }
