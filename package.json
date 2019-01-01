@@ -1,0 +1,23 @@
+{
+  "name": "@cepharum/vue-i18n",
+  "version": "0.0.1",
+  "description": "i18n service for VueJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --ui=tdd tests/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cepharum/vue-i18n.git"
+  },
+  "keywords": [
+    "i18n",
+    "vuejs"
+  ],
+  "author": "cepharum GmbH",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cepharum/vue-i18n/issues"
+  },
+  "homepage": "https://github.com/cepharum/vue-i18n#readme"
+}
