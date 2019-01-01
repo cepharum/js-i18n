@@ -341,16 +341,17 @@ class Localization {
 								}
 
 								const value = source[key];
+								const destinationKey = key.toLowerCase();
 
 								switch ( typeof value ) {
 									case "string" :
 									case "number" : {
-										const existing = destination[key];
+										const existing = destination[destinationKey];
 										if ( existing != null && typeof existing === "object" ) {
 											throw new TypeError( "invalid scalar replacement for existing thread of translations" );
 										}
 
-										destination[key] = String( value );
+										destination[destinationKey] = String( value );
 
 										break;
 									}
@@ -361,20 +362,20 @@ class Localization {
 										}
 
 										if ( value ) {
-											if ( destination.hasOwnProperty( key ) ) {
-												const existing = destination[key];
+											if ( destination.hasOwnProperty( destinationKey ) ) {
+												const existing = destination[destinationKey];
 												if ( typeof existing !== "object" ) {
 													throw new TypeError( "invalid non-scalar replacement for existing leaf of translations tree" );
 												}
 
 												if ( !existing ) {
-													destination[key] = {};
+													destination[destinationKey] = {};
 												}
 											} else {
-												destination[key] = {};
+												destination[destinationKey] = {};
 											}
 
-											this.merge( destination[key], value );
+											this.merge( destination[destinationKey], value );
 										}
 								}
 							} );
@@ -409,7 +410,7 @@ class Localization {
 			let node = this.tree;
 
 			for ( let i = 0; i < numSegments; i++ ) {
-				const key = segments[i];
+				const key = String( segments[i] ).toLowerCase();
 
 				if ( key ) {
 					if ( typeof node === "object" && node && !Array.isArray( node ) && node.hasOwnProperty( key ) ) {
