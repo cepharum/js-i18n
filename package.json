@@ -1,6 +1,6 @@
 {
   "name": "@cepharum/js-i18n",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "an i18n service for Javascript",
   "main": "index.js",
   "private": false,
