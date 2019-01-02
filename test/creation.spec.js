@@ -29,13 +29,13 @@
 const { describe, it } = require( "mocha" );
 require( "should" );
 
-const { Localization } = require( ".." );
+const { Localization, Locale } = require( ".." );
 
 describe( "Creating a locale manager instance", () => {
 	it( "requires locale and tree of translations on construction", () => {
 		( () => new Localization() ).should.throw();
-		( () => new Localization( "de" ) ).should.throw();
-		( () => new Localization( "de", {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de" ) ) ).should.throw();
+		( () => new Localization( new Locale( "de" ), {} ) ).should.not.throw();
 	} );
 
 	it( "requires valid locale on construction", () => {
@@ -46,12 +46,20 @@ describe( "Creating a locale manager instance", () => {
 		( () => new Localization( "de#de", {} ) ).should.throw();
 		( () => new Localization( "de-de+utf8", {} ) ).should.throw();
 
-		( () => new Localization( "de", {} ) ).should.not.throw();
-		( () => new Localization( "de-de", {} ) ).should.not.throw();
-		( () => new Localization( "de_de", {} ) ).should.not.throw();
-		( () => new Localization( "de-de@utf8", {} ) ).should.not.throw();
-		( () => new Localization( "de_de@utf8", {} ) ).should.not.throw();
-		( () => new Localization( "de-de.utf-8", {} ) ).should.not.throw();
-		( () => new Localization( "de_de.utf-8", {} ) ).should.not.throw();
+		( () => new Localization( "de", {} ) ).should.throw();
+		( () => new Localization( "de-de", {} ) ).should.throw();
+		( () => new Localization( "de_de", {} ) ).should.throw();
+		( () => new Localization( "de-de@utf8", {} ) ).should.throw();
+		( () => new Localization( "de_de@utf8", {} ) ).should.throw();
+		( () => new Localization( "de-de.utf-8", {} ) ).should.throw();
+		( () => new Localization( "de_de.utf-8", {} ) ).should.throw();
+
+		( () => new Localization( new Locale( "de" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de-de" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de_de" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de-de@utf8" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de_de@utf8" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de-de.utf-8" ), {} ) ).should.not.throw();
+		( () => new Localization( new Locale( "de_de.utf-8" ), {} ) ).should.not.throw();
 	} );
 } );

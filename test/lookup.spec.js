@@ -29,7 +29,7 @@
 const { describe, it } = require( "mocha" );
 const Should = require( "should" );
 
-const { Localization } = require( ".." );
+const { Localization, Locale } = require( ".." );
 
 
 const ValidNumerusOnlyThread = {
@@ -187,23 +187,23 @@ describe( "A locale manager instance", () => {
 
 	describe( "provides method for looking up translations which", () => {
 		it( "is a function", () => {
-			new Localization( "de", {} ).lookup.should.be.Function();
+			new Localization( new Locale( "de" ), {} ).lookup.should.be.Function();
 		} );
 
 		it( "supports shallow selection of leaf node", () => {
-			new Localization( "de", {
+			new Localization( new Locale( "de" ), {
 				some: "übersetzt",
 			} ).lookup( "some" ).should.be.String().which.is.equal( "übersetzt" );
 		} );
 
 		it( "supports deep selection of leaf node", () => {
-			new Localization( "de", {
+			new Localization( new Locale( "de" ), {
 				some: { deep: { node: "übersetzt" } },
 			} ).lookup( "some.deep.node" ).should.be.String().which.is.equal( "übersetzt" );
 		} );
 
 		it( "supports shallow selection of thread node", () => {
-			new Localization( "de", {
+			new Localization( new Locale( "de" ), {
 				some: { deep: { node: "übersetzt" } },
 			} ).lookup( "some" ).should.be.Object().which.has.property( "deep" ).which.is.Object().and.has.property( "node" ).which.is.String().and.equal( "übersetzt" );
 		} );
@@ -213,11 +213,11 @@ describe( "A locale manager instance", () => {
 				some: "übersetzt",
 			};
 
-			Should( new Localization( "de", tree ).lookup( "other" ) ).be.null();
+			Should( new Localization( new Locale( "de" ), tree ).lookup( "other" ) ).be.null();
 
-			new Localization( "de", tree ).lookup( "other", "my fallback" ).should.be.String().which.is.equal( "my fallback" );
-			new Localization( "de", tree ).lookup( "@other=my implicit fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
-			new Localization( "de", tree ).lookup( "@other=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "other", "my fallback" ).should.be.String().which.is.equal( "my fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "@other=my implicit fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "@other=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
 		} );
 
 		it( "passes (returns) invalid lookups", () => {
@@ -225,87 +225,87 @@ describe( "A locale manager instance", () => {
 				some: "übersetzt",
 			};
 
-			new Localization( "de", tree ).lookup( "my implicit fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
-			new Localization( "de", tree ).lookup( "my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "my implicit fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "my implicit fallback" );
 
-			new Localization( "de", tree ).lookup( "=my implicit fallback" ).should.be.String().which.is.equal( "=my implicit fallback" );
-			new Localization( "de", tree ).lookup( "=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "=my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "=my implicit fallback" ).should.be.String().which.is.equal( "=my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "=my implicit fallback" );
 
-			new Localization( "de", tree ).lookup( "other=my implicit fallback" ).should.be.String().which.is.equal( "other=my implicit fallback" );
-			new Localization( "de", tree ).lookup( "other=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "other=my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "other=my implicit fallback" ).should.be.String().which.is.equal( "other=my implicit fallback" );
+			new Localization( new Locale( "de" ), tree ).lookup( "other=my implicit fallback", "my fallback" ).should.be.String().which.is.equal( "other=my implicit fallback" );
 		} );
 
 		it( "obeys number of subjects when selecting thread node providing complex set of translation depending on numerus", () => {
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 1 ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 0 ).should.be.String().which.is.equal( "Füchse" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 2 ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 1 ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 0 ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 2 ).should.be.String().which.is.equal( "Füchse" );
 		} );
 
 		it( "obeys requested genus on selecting thread node providing complex set of translation depending on genus", () => {
-			new Localization( "de", ValidGenusOnlyThread ).lookup( "name", null, null, "male" ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidGenusOnlyThread ).lookup( "name", null, null, "female" ).should.be.String().which.is.equal( "Füchsin" );
+			new Localization( new Locale( "de" ), ValidGenusOnlyThread ).lookup( "name", null, null, "male" ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidGenusOnlyThread ).lookup( "name", null, null, "female" ).should.be.String().which.is.equal( "Füchsin" );
 		} );
 
 		it( "obeys numerus and genus on selecting thread node providing complex set of translation depending on numerus and genus", () => {
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 0, "male" ).should.be.String().which.is.equal( "Füchse" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 2, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 0, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 2, "male" ).should.be.String().which.is.equal( "Füchse" );
 
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 1, "female" ).should.be.String().which.is.equal( "Füchsin" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 0, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", null, 2, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 1, "female" ).should.be.String().which.is.equal( "Füchsin" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 0, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", null, 2, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
 		} );
 
 		it( "ignores request for particular genus if translations don't distinguish accordingly", () => {
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 0, "male" ).should.be.String().which.is.equal( "Füchse" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 2, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 0, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 2, "male" ).should.be.String().which.is.equal( "Füchse" );
 
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 1, "female" ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 0, "female" ).should.be.String().which.is.equal( "Füchse" );
-			new Localization( "de", ValidNumerusOnlyThread ).lookup( "name", null, 2, "female" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 1, "female" ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 0, "female" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusOnlyThread ).lookup( "name", null, 2, "female" ).should.be.String().which.is.equal( "Füchse" );
 		} );
 
 		it( "requires complex translations to distinguish numerus first and genus second", () => {
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 0, "male" ).should.be.String().which.is.equal( "Füchse" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 2, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 1, "male" ).should.be.String().which.is.equal( "Fuchs" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 0, "male" ).should.be.String().which.is.equal( "Füchse" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 2, "male" ).should.be.String().which.is.equal( "Füchse" );
 
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 1, "female" ).should.be.String().which.is.equal( "Füchsin" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 0, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
-			new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", 2, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 1, "female" ).should.be.String().which.is.equal( "Füchsin" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 0, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
+			new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", 2, "female" ).should.be.String().which.is.equal( "Füchsinnen" );
 
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 1, "male" ).should.be.String().which.is.equal( "fallback" );
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 0, "male" ).should.be.String().which.is.equal( "fallback" );
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 2, "male" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 1, "male" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 0, "male" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 2, "male" ).should.be.String().which.is.equal( "fallback" );
 
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 1, "female" ).should.be.String().which.is.equal( "fallback" );
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 0, "female" ).should.be.String().which.is.equal( "fallback" );
-			new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", 2, "female" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 1, "female" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 0, "female" ).should.be.String().which.is.equal( "fallback" );
+			new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", 2, "female" ).should.be.String().which.is.equal( "fallback" );
 		} );
 
 		describe( "retrieves fallback on looking up explicitly with", () => {
 			it( "numerus in invalid thread distinguishing genus first", () => {
 				for ( const number of [ 1, 0, 2 ] ) {
-					new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", number ).should.be.String().which.is.equal( "fallback" );
+					new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", number ).should.be.String().which.is.equal( "fallback" );
 				}
 			} );
 
 			it( "numerus in valid thread distinguishing numerus first and genus second", () => {
 				for ( const number of [ 1, 0, 2 ] ) {
-					new Localization( "de", ValidNumerusGenusThread ).lookup( "name", "fallback", number ).should.be.String().which.is.equal( "fallback" );
+					new Localization( new Locale( "de" ), ValidNumerusGenusThread ).lookup( "name", "fallback", number ).should.be.String().which.is.equal( "fallback" );
 				}
 			} );
 
 			it( "genus in invalid thread distinguishing genus first", () => {
-				new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", null, "male" ).should.be.String().which.is.equal( "fallback" );
-				new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", null, "female" ).should.be.String().which.is.equal( "fallback" );
+				new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", null, "male" ).should.be.String().which.is.equal( "fallback" );
+				new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", null, "female" ).should.be.String().which.is.equal( "fallback" );
 			} );
 
 			it( "numerus and genus in invalid thread distinguishing genus first", () => {
 				for ( const number of [ 1, 0, 2 ] ) {
 					for ( const genus of [ "male", "female" ] ) {
-						new Localization( "de", InvalidGenusNumerusThread ).lookup( "name", "fallback", number, genus ).should.be.String().which.is.equal( "fallback" );
+						new Localization( new Locale( "de" ), InvalidGenusNumerusThread ).lookup( "name", "fallback", number, genus ).should.be.String().which.is.equal( "fallback" );
 					}
 				}
 			} );
