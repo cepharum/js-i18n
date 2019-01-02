@@ -181,7 +181,7 @@ console.log( util.format( translated, numSearchResults ) );
 
 If value in `numSearchResults` is `1`, this lookup will return the string _There is %d product matching all filter criteria._. Otherwise it is returning the plural form _There are %d products matching all filter criteria._.
 
-This basic support for numerus-aware translations doesn't support proper translations of sentences with multiple numerus-aware elements. Here the term _filter criteria_ is always in its plural form even though it might be possible to have a different translation in case of user was applying single filter, only.
+This basic support for numerus-aware translations doesn't support proper translations of sentences with multiple numerus-aware elements. Here the term _all filter criteria_ is always in its plural form even though it might be possible to have a different translation in case of user was applying single filter, only.
 
 #### Looking Up by Genus
 
@@ -204,7 +204,19 @@ console.log( Localization.lookup( "@mail.action.pickRecipient", null, null, gend
 
 If value in `genera` is `male`, this lookup will return the string _Send him a mail._ If value is `female` the returned string is _Send her a mail._ 
 
-Due to the nature of looking up translations providing any other value for selecting genus results in a mismatch returning `null` due to the lack of a fallback in this example. 
+Due to the nature of looking up translations providing any other value for selecting genus results in a mismatch returning `null` unless providing fallback or having some _catch-all translation_:
+
+```
+Localization.register( "en", {
+	mail: { action: { pickRecipient: {
+		male: "Send him a mail.",
+		female: "Send her a mail.",
+		"*": "Pick as recipient.",
+	} } }
+} );
+``` 
+
+> Catch-all translations are supported for numerus and for genus, though this feature isn't considered stable and might be revised, replaced or removed in a future release.
 
 #### Combining Numerus and Genus
 
@@ -276,7 +288,6 @@ Due to this initialization filters `translate` and `format` are available in tem
   | d | `%d` | Inserts integer numeric value of next argument. |
   | x | `%x` | Inserts hexadecimal integer value of next argument using lowercase letters for digits a-f. |
   | X | `%X` | Inserts hexadecimal integer value of next argument using uppercase letters for digits A-F. |
-  | x | `%x` | Inserts hexadecimal integer value of next argument. |
   | f | `%f` | Inserts fixed-point numeric value of next argument. |
   | . | `%.` | Consumes next argument replacing placeholder with empty string. |
   
@@ -296,12 +307,12 @@ Due to this initialization filters `translate` and `format` are available in tem
   
   In opposition to regular printf syntax `<width>` and `<precision>` are handled separately and thus `<width>` doesn't cover `<precision>`. The resulting width of a generated output is the sum of `<width>` and `<precision>` plus 1 for the separator in case of actually using `<precision>`.
   
-  The `<sep>` is either `.` or `,` and controls what decimal separator is used on processing decimals.
+  The `<sep>` is either `.` or `,` and controls what separator is used on processing decimal values.
   
   > **Examples:**
   >
   > * `%s` with `Hello` generates `Hello`.
-  > * `%8s` with `Hello` generates `Hello` with 3 spaces to the left.
-  > * `%4.2d` with `132.7865` generates `132.79` with 1 space to the left.
+  > * `%8s` with `Hello` generates `Hello` with 3 additional spaces to the left.
+  > * `%4.2d` with `132.7865` generates `132.79` with 1 additional space to the left.
   > * `%,2d` with `132.7865` generates `132,79`.
   > * `%06,2d` with `132.7865` generates `000132,79`.
