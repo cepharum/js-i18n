@@ -296,3 +296,12 @@ Due to this initialization filters `translate` and `format` are available in tem
   
   In opposition to regular printf syntax `<width>` and `<precision>` are handled separately and thus `<width>` doesn't cover `<precision>`. The resulting width of a generated output is the sum of `<width>` and `<precision>` plus 1 for the separator in case of actually using `<precision>`.
   
+  The `<sep>` is either `.` or `,` and controls what decimal separator is used on processing decimals.
+  
+  > **Examples:**
+  >
+  > * `%s` with `Hello` generates `Hello`.
+  > * `%8s` with `Hello` generates `Hello` with 3 spaces to the left.
+  > * `%4.2d` with `132.7865` generates `132.79` with 1 space to the left.
+  > * `%,2d` with `132.7865` generates `132,79`.
+  > * `%06,2d` with `132.7865` generates `000132,79`.
