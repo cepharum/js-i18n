@@ -295,7 +295,7 @@ Due to this initialization filters `translate` and `format` are available in tem
   
   Another approach is using argument references. A reference consists of a dollar sign `$` followed by a positive integer value selecting argument in list of arguments by position with `1` referring to the first argument. Using a reference doesn't consume next argument. 
   
-  > **Example:** The placeholder `%$1s` requests to inject value of argument as string no matter whether other placeholders might have consumed arguments before or not.
+  > **Example:** The placeholder `%$1s` requests to inject value of first argument as string no matter whether other placeholders might have consumed arguments before or not.
   
   The placeholder components `<fill>`, `<width>` and `<precision>` are all available to control vertical alignment of injected value:
   
