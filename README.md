@@ -159,7 +159,7 @@ The previously introduced look-up key is extended by an assigment operator to ma
 Implicit fallbacks may be arbitrary strings, but they can't be threads of tree. This limitation does not apply to explicit fallbacks. Thus, explicit fallbacks may be used with supporting different numeri and genera, as well.
 
 #### Looking up by Properties
-In third argument you may provide an object of properties of the subjects/objects to be described by translation. These are used to select a more specific translation. 
+In third argument you may provide an options object of properties of the subjects/objects to be described by translation. These are used to select a more specific translation. 
 
 The options Object has the following parameters:
 
@@ -170,9 +170,9 @@ The options Object has the following parameters:
 
 
 
-#### Looking Up by Numerus
+#### Numerus
 
-In the option object you may provide number of subjects/objects to be described by translation. A locale-specific function is used internally to map the provided number of items onto the name of a numerus. This name is then used to select another level in tree of translations.
+The parameter number provides the number of subjects/objects to be described by translation. A locale-specific function is used internally to map the provided number of items onto the name of a numerus. This name is then used to select another level in tree of translations.
 
 ```javascript
 import { Localization } from "@cepharum/js-i18n";
@@ -195,9 +195,9 @@ If value in `numSearchResults` is `1`, this lookup will return the string _There
 
 This basic support for numerus-aware translations doesn't support proper translations of sentences with multiple numerus-aware elements. Here the term _all filter criteria_ is always in its plural form even though it might be possible to have a different translation in case of user was applying single filter, only.
 
-#### Looking Up by Genus
+#### Genus
 
-In option object you may provide name of genus to be used to find translation depending on a subject's or an object's genus. There is no fixed set of supported names. In addition, the name isn't processed using some locale-specific function like numerus before. Thus you should decide to have a reasonable set of names used throughout your whole set of translations. We'd consider using genera `male` and `female` here.
+The parameter gender provides the name of genus to be used to find translation depending on a subject's or an object's genus. There is no fixed set of supported names. In addition, the name isn't processed using some locale-specific function like numerus before. Thus you should decide to have a reasonable set of names used throughout your whole set of translations. We'd consider using genera `male` and `female` here.
 
 ```javascript
 import { Localization } from "@cepharum/js-i18n";
