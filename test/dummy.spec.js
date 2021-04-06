@@ -31,14 +31,34 @@ const Should = require( "should" );
 
 const { Localization } = require( ".." );
 
-describe( "A registry of locale managers", () => {
+
+describe( "A dummy instance of current Localization", () => {
 	it( "is available", () => {
-		Should.exist( Localization );
+		Should.exist( Localization.current );
 	} );
 
-	describe( "provides static getter for accessing current locale's manager which", () => {
+	describe( "is returned by static getter if Localization is not initialized", () => {
 		it( "does not throw initially", () => {
 			( () => Localization.current ).should.not.throw();
+		} );
+	} );
+
+	describe( "lookup will always return fallback while using dummy", () => {
+		it( "", () => {
+			Localization.current.lookup( "@other", "my fallback" ).should.be.String().which.is.equal( "my fallback" );
+		} );
+	} );
+
+	describe( "a static getter tells if there is a current instance", () => {
+		it( "returns false if not initialized", () => {
+			Should.exist( Localization.hasCurrent );
+			Localization.hasCurrent.should.be.false();
+		} );
+
+		it( "returns true if initialized", () => {
+			Localization.register( "de", {} );
+			Localization.select( "de", true );
+			Localization.hasCurrent.should.be.true();
 		} );
 	} );
 } );

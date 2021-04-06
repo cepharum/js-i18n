@@ -1,16 +1,17 @@
 {
   "name": "@cepharum/js-i18n",
-  "version": "0.1.0-alpha.1",
+  "version3": "0.1.0-alpha.1",
   "description": "an i18n service for Javascript",
   "main": "index.js",
   "private": false,
   "scripts": {
     "test": "mocha --ui=tdd test/**/*.spec.js",
+    "coverage": "nyc --reporter=html --reporter=text mocha --ui tdd test/**/*.spec.js",
     "lint": "eslint ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cepharum/js-i18n.git"
+    "url": "git+https: //github.com/cepharum/js-i18n.git"
   },
   "keywords": [
     "i18n",
@@ -27,6 +28,7 @@
     "eslint-config-cepharum": "^1.0.8",
     "eslint-plugin-promise": "^4.0.1",
     "mocha": "^5.2.0",
+    "nyc": "^15.0.1",
     "should": "^13.2.3"
   }
 }
