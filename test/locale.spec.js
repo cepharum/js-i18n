@@ -67,6 +67,7 @@ describe( "Locale is a class that", () => {
 				it( "1 if languages are equivalent w/o regards to any region selector", () => {
 					Locale.compare( "en-en", "en-us" ).should.eql( 1 );
 					Locale.compare( "de-de", "de-by" ).should.eql( 1 );
+					Locale.compare( "De-de", "DE-by" ).should.eql( 1 );
 					Locale.compare( new Locale( "de-de" ), "de-by" ).should.eql( 1 );
 				} );
 				it( " 2 if one of the locales is lacking region selector, but matches other locale by language", () => {
