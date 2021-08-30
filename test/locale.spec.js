@@ -118,6 +118,8 @@ describe( "Locale is a class that", () => {
 			describe( "selectLocalized", () => {
 				it( "that localizes a property's value", () => {
 					new Locale( "foo" ).selectLocalized( { foo: "foo" } ).should.eql( "foo" );
+					new Locale( "foo" ).selectLocalized( { foo: "foo", en:"bar" } ).should.eql( "foo" );
+					new Locale( "foo" ).selectLocalized( { FOO: "foo", en:"bar" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { any: "foo" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { en: "foo" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { "*": "foo" } ).should.eql( "foo" );
