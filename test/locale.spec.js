@@ -67,7 +67,9 @@ describe( "Locale is a class that", () => {
 				it( "1 if languages are equivalent w/o regards to any region selector", () => {
 					Locale.compare( "en-en", "en-us" ).should.eql( 1 );
 					Locale.compare( "de-de", "de-by" ).should.eql( 1 );
-					Locale.compare( "De-de", "DE-by" ).should.eql( 1 );
+					Locale.compare( "De-de", "de-by" ).should.eql( 1 );
+					Locale.compare( "De-de", "dE-by" ).should.eql( 1 );
+					Locale.compare( "de-de", "DE-by" ).should.eql( 1 );
 					Locale.compare( new Locale( "de-de" ), "de-by" ).should.eql( 1 );
 				} );
 				it( " 2 if one of the locales is lacking region selector, but matches other locale by language", () => {
@@ -77,6 +79,13 @@ describe( "Locale is a class that", () => {
 				it( "3 if locales match exactly (also matching by region unless neither locale includes any region selector", () => {
 					Locale.compare( "de", "de" ).should.eql( 3 );
 					Locale.compare( "de-de", "de-de" ).should.eql( 3 );
+					Locale.compare( "De-de", "de-de" ).should.eql( 3 );
+					Locale.compare( "dE-de", "de-de" ).should.eql( 3 );
+					Locale.compare( "de-de", "de-De" ).should.eql( 3 );
+					Locale.compare( "de-de", "de-dE" ).should.eql( 3 );
+					Locale.compare( "De-de", "de-De" ).should.eql( 3 );
+					Locale.compare( "De-de", "dE-De" ).should.eql( 3 );
+					Locale.compare( "De-dE", "dE-De" ).should.eql( 3 );
 				} );
 			} );
 		} );
@@ -102,6 +111,7 @@ describe( "Locale is a class that", () => {
 			describe( "toString", () => {
 				it( "that retrieves locale's identifier as its string-formatted representation", () => {
 					new Locale( "de-de" ).toString().should.eql( "de-de" );
+					new Locale( "De-dE" ).toString().should.eql( "de-de" );
 					new Locale( "de" ).toString().should.eql( "de" );
 				} );
 			} );
