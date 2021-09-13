@@ -67,16 +67,34 @@ describe( "Locale is a class that", () => {
 				Localization.register( "en", {} );
 				Localization.current.locale.tag.should.eql( "en" );
 			} );
-			it( "returns currentLocale it was chosen before", () => {
+			it( "returns currentLocale it was chosen before", async () => {
 				Localization.register( new Locale( "de" ), {} );
-				Localization.select( "de", true );
+				await Localization.select( "de", true );
 				Localization.current.locale.tag.should.eql( "de" );
 			} );
 		} );
+		describe( "availableLocales", () => {
+			beforeEach( () => {
+				Localization.clear();
+			} );
+			afterEach( () => {
+				Localization.clear();
+			} );
+			it( "returns an iterator", () => {
+				( () => Localization.availableLocales ).should.not.throw();
+				Localization.availableLocales.should.be.instanceof(Object);
+				Localization.availableLocales.should.have.property("next")
+
+			} );
+			it( "returns iterator if accepted locales", () => {
+				Localization.register( "en", {} );
+				Localization.availableLocales.next().value.should.eql("en")
+			} );
+		} );
 		describe( "updateTranslations", () => {
-			it( "updates the local translations", () => {
+			it( "updates the local translations", async () => {
 				Localization.register( new Locale( "de" ), {} );
-				Localization.select( "de", true );
+				await Localization.select( "de", true );
 				Should( Localization.current.lookup( "@foo" ) ).eql( null );
 				Localization.updateTranslations( "any", { foo: "foo" } );
 				Should( Localization.current.lookup( "@foo" ) ).eql( null );
@@ -171,6 +189,13 @@ describe( "Locale is a class that", () => {
 				it( "accepts Promises as translation", () => {
 					Localization.initialize( () => Promise.reject( new Error ), () => [ "en", "de" ] ).should.not.be.rejected();
 				} );
+				it("then provides these Locales", async () => {
+					Localization.initialize(() => ({}), () => ["en", "de"]).should.not.be.rejected();
+					let l10n = await Localization.select("de")
+						l10n.locale.tag.should.eql("de");
+					l10n = await Localization.select("en")
+						l10n.locale.tag.should.eql("en");
+				})
 			} );
 
 		} );

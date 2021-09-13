@@ -55,9 +55,10 @@ describe( "A dummy instance of current Localization", () => {
 			Localization.hasCurrent.should.be.false();
 		} );
 
-		it( "returns true if initialized", () => {
+		it( "returns true if initialized", async () => {
 			Localization.register( "de", {} );
-			Localization.select( "de", true );
+			const l10n = await Localization.select( "de", true );
+			console.log(l10n);
 			Localization.hasCurrent.should.be.true();
 		} );
 	} );
