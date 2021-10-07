@@ -1,9 +1,9 @@
 /**
- * (c) 2019 cepharum GmbH, Berlin, http://cepharum.de
+ * (c) 2021 cepharum GmbH, Berlin, http://cepharum.de
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 cepharum GmbH
+ * Copyright (c) 2021 cepharum GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,17 @@
  * @author: cepharum
  */
 
-const { describe, it } = require( "mocha" );
-const Should = require( "should" );
+import { describe, it, afterEach } from "mocha";
+import Should from "should";
 
-const { Localization } = require( ".." );
-
+import * as index from "../lib/index.js";
+const { Localization } = index;
 
 describe( "A dummy instance of current Localization", () => {
+	afterEach( () => {
+		Localization.clear();
+	} );
+
 	it( "is available", () => {
 		Should.exist( Localization.current );
 	} );
@@ -44,7 +48,7 @@ describe( "A dummy instance of current Localization", () => {
 	} );
 
 	describe( "lookup will always return fallback while using dummy", () => {
-		it( "", () => {
+		it( "that always returns fallback", () => {
 			Localization.current.lookup( "@other", "my fallback" ).should.be.String().which.is.equal( "my fallback" );
 		} );
 	} );
@@ -58,7 +62,7 @@ describe( "A dummy instance of current Localization", () => {
 		it( "returns true if initialized", async () => {
 			Localization.register( "de", {} );
 			const l10n = await Localization.select( "de", true );
-			console.log(l10n);
+			l10n.locale.tag.should.be.eql("de")
 			Localization.hasCurrent.should.be.true();
 		} );
 	} );

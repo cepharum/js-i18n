@@ -1,9 +1,9 @@
 /**
- * (c) 2019 cepharum GmbH, Berlin, http://cepharum.de
+ * (c) 2021 cepharum GmbH, Berlin, http://cepharum.de
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 cepharum GmbH
+ * Copyright (c) 2021 cepharum GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,16 @@
  * @author: cepharum
  */
 
-const { describe, it } = require( "mocha" );
-const Should = require( "should" );
+import { describe, it, afterEach } from "mocha";
+import Should from "should";
 
-const { Localization } = require( ".." );
+import { Localization } from "../lib/index.js";
 
 describe( "A registry of locale managers", () => {
+	afterEach( () => {
+		Localization.clear();
+	} );
+
 	it( "is available", () => {
 		Should.exist( Localization );
 	} );

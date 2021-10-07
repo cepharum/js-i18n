@@ -1,9 +1,9 @@
 /**
- * (c) 2019 cepharum GmbH, Berlin, http://cepharum.de
+ * (c) 2021 cepharum GmbH, Berlin, http://cepharum.de
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 cepharum GmbH
+ * Copyright (c) 2021 cepharum GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,16 @@
  * @author: cepharum
  */
 
-const { describe, it } = require( "mocha" );
-require( "should" );
+import { describe, it, afterEach } from "mocha";
+import "should";
 
-const { Locale } = require( ".." );
+import { Locale, Localization } from "../lib/index.js";
 
 describe( "Locale is a class that", () => {
+	afterEach( () => {
+		Localization.clear();
+	} );
+
 	it( "exists", () => {
 		Locale.should.be.ok();
 	} );
@@ -118,8 +122,8 @@ describe( "Locale is a class that", () => {
 			describe( "selectLocalized", () => {
 				it( "that localizes a property's value", () => {
 					new Locale( "foo" ).selectLocalized( { foo: "foo" } ).should.eql( "foo" );
-					new Locale( "foo" ).selectLocalized( { foo: "foo", en:"bar" } ).should.eql( "foo" );
-					new Locale( "foo" ).selectLocalized( { FOO: "foo", en:"bar" } ).should.eql( "foo" );
+					new Locale( "foo" ).selectLocalized( { foo: "foo", en: "bar" } ).should.eql( "foo" );
+					new Locale( "foo" ).selectLocalized( { FOO: "foo", en: "bar" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { any: "foo" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { en: "foo" } ).should.eql( "foo" );
 					new Locale( "foo" ).selectLocalized( { "*": "foo" } ).should.eql( "foo" );
